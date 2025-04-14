@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 const Home = () => {
   return (
-    <div className="h-screen flex gap-2 justify-center items-center">
+    <div className="flex gap-2 justify-center items-center">
       <NavLink to="/login">
         <Button variant="secondary">Login</Button>
       </NavLink>
