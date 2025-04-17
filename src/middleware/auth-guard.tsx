@@ -1,3 +1,5 @@
+import { useAuth } from '@/hooks/useAuth';
+import { Loader } from 'lucide-react';
 import {Navigate, Outlet} from 'react-router-dom'
 
 export function AuthGuard() {

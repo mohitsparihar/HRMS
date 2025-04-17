@@ -30,13 +30,23 @@ const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "3rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
-type SidebarContextProps = {
+/**
+ * Props for the Sidebar context
+ */
+export type SidebarContextProps = {
+  /** Current state of the sidebar ("expanded" or "collapsed") */
   state: "expanded" | "collapsed"
+  /** Whether the sidebar is open */
   open: boolean
+  /** Function to set the open state */
   setOpen: (open: boolean) => void
+  /** Whether the mobile sidebar is open */
   openMobile: boolean
+  /** Function to set the mobile open state */
   setOpenMobile: (open: boolean) => void
+  /** Whether the current view is mobile */
   isMobile: boolean
+  /** Function to toggle the sidebar state */
   toggleSidebar: () => void
 }
 

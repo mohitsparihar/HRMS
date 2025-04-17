@@ -2,24 +2,105 @@ import {
   useReactTable,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
+  //   getPaginationRowModel,
   ColumnDef,
   flexRender,
+  PaginationState,
+  RowSelectionState,
 } from "@tanstack/react-table";
 import { Job } from "@/types/jobs";
 import { useState } from "react";
 import { useGetJobs } from "@/api/jobs";
+import StatusHandler from "@/components/jobs/StatusHandler";
 
+/**
+ * Renders a paginated and filterable list of jobs using a table.
+ * Integrates with a custom hook `useGetJobs` to fetch job data and uses
+ * TanStack Table for table management, including pagination, row selection,
+ * and global filtering.
+ *
+ * @example
+ * ```tsx
+ * import JobsList from './JobList';
+ *
+ * const App = () => {
+ *   return (
+ *     <div>
+ *       <JobsList />
+ *     </div>
+ *   );
+ * };
+ * ```
+ *
+ * @remarks
+ * The table supports:
+ * - Row selection
+ * - Global filtering
+ * - Manual pagination
+ * - Pagination controls for navigation and page size adjustment
+ * - Dynamically defined columns with custom renderers for specific fields
+ *
+ * ### Dependencies
+ * - `useGetJobs` - Custom hook for fetching job data
+ * - `@tanstack/react-table` - Library for managing table state and rendering
+ * - `StatusHandler` - Component for rendering job status
+ *
+ * ### State Management
+ * - `pageIndex` (number): Current page index for pagination
+ * - `pageSize` (number): Number of rows per page
+ * - `rowSelection` (RowSelectionState): State for selected rows
+ * - `globalFilter` (string): Global filter value for searching jobs
+ *
+ * ### Error Handling
+ * - Displays error message if data fetching fails
+ * - Shows loading state during data fetch
+ *
+ * ### Features
+ * - Search functionality via global filter
+ * - Pagination controls
+ * - Row selection
+ * - Dynamic column rendering
+ *
+ * @returns The rendered JobsList component
+ */
 const JobsList = () => {
-  const { data: jobs, isLoading, isError, error } = useGetJobs();
+  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+  const { data, isLoading, isError, error } = useGetJobs({
+    page: pageIndex,
+    pageSize,
+  });
+
   const [globalFilter, setGlobalFilter] = useState("");
 
+  const pagination = {
+    pageIndex,
+    pageSize,
+  };
   // Define columns
   const columns: ColumnDef<Job>[] = [
     {
-      accessorKey: "id",
-      header: "Job ID",
-      cell: (info) => info.getValue(),
+      id: "select",
+      header: ({ table }) => (
+        <input
+          type="checkbox"
+          checked={table.getIsAllPageRowsSelected()}
+          onChange={table.getToggleAllPageRowsSelectedHandler()}
+        />
+      ),
+      cell: ({ row }) => (
+        <input
+          type="checkbox"
+          checked={row.getIsSelected()}
+          onChange={row.getToggleSelectedHandler()}
+          disabled={!row.getCanSelect()}
+        />
+      ),
     },
     {
       accessorKey: "job_title",
@@ -51,19 +132,7 @@ const JobsList = () => {
       header: "Status",
       cell: (info) => {
         const status = info.getValue() as number;
-        return (
-          <span
-            className={`px-2 py-1 rounded-full text-xs ${
-              status === 1
-                ? "bg-green-100 text-green-800"
-                : status === 0
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-gray-100 text-gray-800"
-            }`}
-          >
-            {status === 1 ? "Active" : status === 0 ? "Inactive" : "Unknown"}
-          </span>
-        );
+        return <StatusHandler status={status} />;
       },
     },
     {
@@ -74,27 +143,35 @@ const JobsList = () => {
   ];
 
   const table = useReactTable({
-    data: jobs || [],
+    data: data?.data || [],
     columns,
     state: {
+      pagination,
+      rowSelection,
       globalFilter,
     },
+    onPaginationChange: setPagination,
+    onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: {
-        pageSize: 10,
-      },
-    },
+    // getPaginationRowModel: getPaginationRowModel(),
+    manualPagination: true,
+    pageCount: data ? Math.ceil(data.total / pageSize) : 0,
+    // initialState: {
+    //   pagination: {
+    //     pageSize: 10,
+    //   },
+    // },
   });
+
+  //   const selectedJobs = table.getSelectedRowModel().flatRows.map(row => row.original);
 
   if (isLoading) return <div className="p-4">Loading jobs...</div>;
   if (isError)
     return <div className="p-4 text-red-500">Error: {error.message}</div>;
 
-  console.log(jobs);
+  console.log(data);
 
   return (
     <div className="p-4">
