@@ -12,6 +12,46 @@ const JobList = lazy(() => import("@/pages/jobs/JobList"));
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const TalentList = lazy(() => import("@/pages/talent/TalentList"));
 
+/**
+ * Defines the application's route configuration.
+ * 
+ * The route configuration is structured into three main sections:
+ * 
+ * ## Protected Routes (/)
+ * - Guarded by {@link ProtectedRoute}
+ * - Contains {@link MainLayout} with:
+ *   - Root redirect to /jobs
+ *   - Dashboard view
+ *   - Jobs management
+ *   - Talent management
+ * 
+ * ## Public Route (/home)
+ * - Renders the landing page
+ * 
+ * ## Authentication Routes
+ * - Managed by {@link AuthLayout}
+ * - /login - User authentication
+ * - /register - New user registration
+ * - /forget_password - Password recovery
+ * 
+ * @type {import('react-router-dom').RouteObject[]}
+ * 
+ * @example
+ * ```tsx
+ * {
+ *   path: "/",
+ *   element: <ProtectedRoute />,
+ *   children: [
+ *     {
+ *       element: <MainLayout />,
+ *       children: [
+ *         { path: "jobs", element: <JobList /> }
+ *       ]
+ *     }
+ *   ]
+ * }
+ * ```
+ */
 export const routes: RouteObject[] = [
   {
     path: "/",
