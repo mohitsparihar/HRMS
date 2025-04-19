@@ -1,0 +1,28 @@
+{
+    "source": {
+        "include": [
+            "src"
+        ],
+        "includePattern": ".+\\.(jsx|js|ts|tsx)$",
+        "exclude": [
+            "src/**/*.test.js",
+            "src/**/*.spec.js",
+            "node_modules"
+        ]
+    },
+    "plugins": [
+        "node_modules/jsdoc-plugin-typescript"
+    ],
+    "typescript": {
+        "moduleRoot": "src"
+    },
+    "opts": {
+        "recurse": true,
+        "destination": "docs/",
+        "template": "node_modules/minami"
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    }
+}
