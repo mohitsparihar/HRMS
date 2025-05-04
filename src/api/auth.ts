@@ -6,6 +6,12 @@ interface LoginCredentials {
   password: string;
 }
 
+interface TalentSignUpCredentials {
+    name: string
+    email: string;
+    password: string;
+}
+
 /**
  * Handles user authentication with the server
  */
@@ -24,6 +30,19 @@ export const authApi = {
       password: encryptedPassword
     });
     
+    return response.data;
+  },
+
+  signUpTalent: async (credentials: TalentSignUpCredentials) => {
+    const encryptedPassword = CryptoJS.AES.encrypt(
+        credentials.password,
+        import.meta.env.VITE_REACT_APP_PASS_KEY
+    ).toString();
+
+    const response = await axios.post('/auth/sign_up', {
+        ...credentials, password: encryptedPassword
+    });
+
     return response.data;
   }
 };

@@ -171,8 +171,6 @@ const JobsList = () => {
   if (isError)
     return <div className="p-4 text-red-500">Error: {error.message}</div>;
 
-  console.log(data);
-
   return (
     <div className="p-4">
       <div className="mb-4">

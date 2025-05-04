@@ -10,6 +10,7 @@ import {
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   //   SidebarGroupLabel,
@@ -18,6 +19,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { NavUser } from "./navUser";
 
 // Menu items.
 const items = [
@@ -81,6 +83,9 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser />
+      </SidebarFooter>
     </Sidebar>
   );
 }

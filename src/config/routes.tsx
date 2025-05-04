@@ -1,6 +1,7 @@
 import { AuthLayout } from "@/layouts/AuthLayout";
 import { MainLayout } from "@/layouts/MainLayout";
-import { ProtectedRoute } from "@/middleware/route-guard";
+import { AuthGuard } from "@/middleware/authGuard";
+import { ProtectedRoute } from "@/middleware/routeGuard";
 import { lazy } from "react";
 import { Navigate, RouteObject } from "react-router-dom";
 
@@ -14,9 +15,9 @@ const TalentList = lazy(() => import("@/pages/talent/TalentList"));
 
 /**
  * Defines the application's route configuration.
- * 
+ *
  * The route configuration is structured into three main sections:
- * 
+ *
  * ## Protected Routes (/)
  * - Guarded by {@link ProtectedRoute}
  * - Contains {@link MainLayout} with:
@@ -24,18 +25,18 @@ const TalentList = lazy(() => import("@/pages/talent/TalentList"));
  *   - Dashboard view
  *   - Jobs management
  *   - Talent management
- * 
+ *
  * ## Public Route (/home)
  * - Renders the landing page
- * 
+ *
  * ## Authentication Routes
  * - Managed by {@link AuthLayout}
  * - /login - User authentication
  * - /register - New user registration
  * - /forget_password - Password recovery
- * 
+ *
  * @type {import('react-router-dom').RouteObject[]}
- * 
+ *
  * @example
  * ```tsx
  * {
@@ -81,24 +82,30 @@ export const routes: RouteObject[] = [
     ],
   },
   {
-    path: "/home",
-    element: <Home />,
-  },
-  {
     path: "",
-    element: <AuthLayout />,
+    element: <AuthGuard />,
     children: [
       {
-        path: "/login",
-        element: <Login />,
+        path: "/home",
+        element: <Home />,
       },
       {
-        path: "/register",
-        element: <Register />,
-      },
-      {
-        path: "/forget_password",
-        element: <ForgetPassword />,
+        path: "",
+        element: <AuthLayout />,
+        children: [
+          {
+            path: "/login",
+            element: <Login />,
+          },
+          {
+            path: "/register",
+            element: <Register />,
+          },
+          {
+            path: "/forget_password",
+            element: <ForgetPassword />,
+          },
+        ],
       },
     ],
   },
